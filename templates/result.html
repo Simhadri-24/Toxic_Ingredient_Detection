@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Result</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6f61; /* Coral */
+            --secondary-color: #2c3e50; /* Navy */
+            --accent-color: #28a745; /* Green */
+            --bg-gradient: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            --white: #ffffff;
+            --text-dark: #333333;
+            --toxic-color: #dc3545; /* Red for toxic */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--secondary-color);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23dfe6e9" fill-opacity="0.2"%3E%3Cpath d="M0 0h2v2H0zM10 10h2v2h-2z"/%3E%3C/g%3E%3C/svg%3E');
+            z-index: -1;
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--secondary-color), #34495e);
+            width: 100%;
+            padding: 20px;
+            color: var(--white);
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 0 0 15px 15px;
+            margin-bottom: 40px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 2rem auto;
+            padding: 40px;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            border-radius: 20px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-message {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .safe {
+            color: var(--accent-color);
+        }
+
+        .toxic {
+            color: var(--toxic-color);
+        }
+
+        .causes-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .causes-item {
+            background: #fff5f5;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .causes-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .ingredient-info {
+            margin-bottom: 10px;
+        }
+
+        .ingredient-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .risk-level {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: var(--toxic-color);
+            margin: 5px 0;
+        }
+
+        .causes {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        #extracted-text {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f5f7fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        #extracted-text h3 {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        #extracted-text h3::after {
+            content: '';
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+        }
+
+        #extracted-text p {
+            font-size: 0.95em;
+            color: var(--text-dark);
+            white-space: pre-wrap;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        #return-button, #home-button {
+            padding: 12px 30px;
+            background: var(--secondary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        #return-button:hover, #home-button:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(44, 62, 80, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 90%;
+                padding: 30px;
+            }
+
+            header {
+                font-size: 1.5em;
+            }
+
+            .result-message {
+                font-size: 1.2em;
+            }
+
+            .causes-item {
+                padding: 12px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            #return-button, #home-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            .result-message {
+                font-size: 1.1em;
+            }
+
+            .ingredient-name {
+                font-size: 1em;
+            }
+
+            .risk-level, .causes {
+                font-size: 0.85em;
+            }
+
+            #extracted-text {
+                padding: 15px;
+            }
+
+            #extracted-text h3 {
+                font-size: 1.2em;
+            }
+
+            #extracted-text p {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>Scan Result</header>
+    <div class="container">
+        {% if not safe %}
+            <p class="result-message toxic">⚠️ {{ product_name }} contains toxic ingredients:</p>
+            <ul class="causes-list">
+                {% for ingredient in causes %}
+                    <li class="causes-item">
+                        <div class="ingredient-info">
+                            <div class="ingredient-name">{{ ingredient.name | capitalize }}</div>
+                            <div class="risk-level">Risk Level: {{ ingredient.risk_level }}</div>
+                            <div class="causes">Health Risks: {{ ingredient.causes }}</div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="result-message safe">✅ {{ product_name }} is safe to consume.</p>
+        {% endif %}
+        <div id="extracted-text">
+            <h3>Extracted Ingredients</h3>
+            <p>{{ full_text }}</p>
+        </div>
+        <div class="button-container">
+            <button id="return-button" onclick="location.href='/scanner'">🔄 Return to Scan Page</button>
+            <a href="{{ url_for('home') }}" id="home-button">🏠 Home</a>
+        </div>
+    </div>
+</body>
+</html>

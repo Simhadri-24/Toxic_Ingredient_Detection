@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator - Meal Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6f61;
+            --secondary-color: #2c3e50;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            --input-border: #dfe6e9;
+            --input-focus: #ff6f61;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --white: #ffffff;
+            --add-item-color: #28a745; /* Green for Add Item button */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--secondary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23dfe6e9" fill-opacity="0.2"%3E%3Cpath d="M0 0h2v2H0zM10 10h2v2h-2z"/%3E%3C/g%3E%3C/svg%3E');
+            z-index: -1;
+        }
+
+        .container {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .heading-container {
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            width: 50px;
+            height: 3px;
+            background: var(--primary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .meal-columns {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .meal-column {
+            flex: 1;
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            text-align: left;
+        }
+
+        .meal-button {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 15px;
+        }
+
+        .meal-button.invaded {
+            transform: translateY(2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background: #e55a4f;
+        }
+
+        .meal-button.neutral {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background: var(--primary-color);
+        }
+
+        .meal-button.raised {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 111, 97, 0.4);
+            background: #ff8c7f;
+        }
+
+        .meal-button:hover {
+            background: #e55a4f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 111, 97, 0.4);
+        }
+
+        .add-item-btn {
+            background: var(--add-item-color);
+            color: var(--white);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 15px;
+        }
+
+        .add-item-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
+        }
+
+        .meal-items {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .meal-items.visible {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            font-size: 0.95em;
+            font-weight: 400;
+            margin-bottom: 12px;
+            color: var(--secondary-color);
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 80px;
+            padding: 8px;
+            margin-left: 10px;
+            border: 2px solid var(--input-border);
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: var(--secondary-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus {
+            border-color: var(--input-focus);
+            box-shadow: 0 0 6px rgba(255, 111, 97, 0.3);
+            outline: none;
+        }
+
+        input[type="submit"], .back-btn, .modal-btn {
+            background: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        input[type="submit"]:hover, .back-btn:hover, .modal-btn:hover {
+            background: #e55a4f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(255, 111, 97, 0.4);
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--shadow);
+            position: relative;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            margin-left: 0;
+            margin-top: 5px;
+        }
+
+        .modal-btn.cancel {
+            background: #6c757d;
+        }
+
+        .modal-btn.cancel:hover {
+            background: #5a6268;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--secondary-color);
+        }
+
+        .decor-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 111, 97, 0.2);
+            z-index: -1;
+        }
+
+        .decor-circle:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: -50px;
+            left: -50px;
+        }
+
+        .decor-circle:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            bottom: -40px;
+            right: -40px;
+        }
+
+        @media (max-width: 768px) {
+            .meal-columns {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .meal-column {
+                width: 100%;
+            }
+
+            .container {
+                padding: 20px;
+                max-width: 90%;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            input[type="submit"], .back-btn, .modal-btn {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            input[type="number"], input[type="text"] {
+                width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="decor-circle"></div>
+        <div class="decor-circle"></div>
+        <div class="heading-container">
+            <h2>Meal Details</h2>
+        </div>
+        <form action="{{ url_for('bmi_result') }}" method="post" id="mealForm">
+            <div class="meal-columns">
+                <!-- Morning Meal Column -->
+                <div class="meal-column">
+                    <button type="button" class="meal-button invaded" data-meal="morning">Morning Meal (Tiffin)</button>
+                    <button type="button" class="add-item-btn" data-meal="morning">Add Item</button>
+                    <div class="meal-items" id="morning-items">
+                        <label><input type="checkbox" name="morning" value="idli"> Idli (2 pieces, 70 kcal)<input type="number" class="quantity" name="morning_idli_qty" data-calories="70" placeholder="pieces" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="dosa"> Dosa (1, 120 kcal)<input type="number" class="quantity" name="morning_dosa_qty" data-calories="120" placeholder="count" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="poha"> Poha (100g, 130 kcal)<input type="number" class="quantity" name="morning_poha_qty" data-calories="130" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="pongal"> Pongal (100g, 150 kcal)<input type="number" class="quantity" name="morning_pongal_qty" data-calories="150" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="vada"> Vada (1 piece, 100 kcal)<input type="number" class="quantity" name="morning_vada_qty" data-calories="100" placeholder="pieces" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="poori"> Poori (1 piece, 110 kcal)<input type="number" class="quantity" name="morning_poori_qty" data-calories="110" placeholder="pieces" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="chapaathi"> Chapaathi (1 piece, 80 kcal)<input type="number" class="quantity" name="morning_chapaathi_qty" data-calories="80" placeholder="pieces" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="tea"> Tea (1 cup, 30 kcal)<input type="number" class="quantity" name="morning_tea_qty" data-calories="30" placeholder="cups" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="coffee"> Coffee (1 cup, 40 kcal)<input type="number" class="quantity" name="morning_coffee_qty" data-calories="40" placeholder="cups" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="milk"> Milk (1 cup, 120 kcal)<input type="number" class="quantity" name="morning_milk_qty" data-calories="120" placeholder="cups" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="bread"> Bread (1 slice, 70 kcal)<input type="number" class="quantity" name="morning_bread_qty" data-calories="70" placeholder="slices" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="peanut_butter"> Peanut Butter (1 tbsp, 90 kcal)<input type="number" class="quantity" name="morning_peanut_butter_qty" data-calories="90" placeholder="tbsp" min="0"></label>
+                        <label><input type="checkbox" name="morning" value="jam"> Jam (1 tbsp, 50 kcal)<input type="number" class="quantity" name="morning_jam_qty" data-calories="50" placeholder="tbsp" min="0"></label>
+                    </div>
+                </div>
+
+                <!-- Afternoon Meal Column -->
+                <div class="meal-column">
+                    <button type="button" class="meal-button invaded" data-meal="afternoon">Afternoon Meal (Lunch)</button>
+                    <button type="button" class="add-item-btn" data-meal="afternoon">Add Item</button>
+                    <div class="meal-items" id="afternoon-items">
+                        <label><input type="checkbox" name="afternoon" value="rice_dal"> Rice & Dal (200g, 250 kcal)<input type="number" class="quantity" name="afternoon_rice_dal_qty" data-calories="250" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="roti_sabzi"> Roti & Sabzi (2 rotis + 100g sabzi, 240 kcal)<input type="number" class="quantity" name="afternoon_roti_sabzi_qty" data-calories="240" placeholder="sets" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="chicken_curry"> Chicken Curry (150g, 300 kcal)<input type="number" class="quantity" name="afternoon_chicken_curry_qty" data-calories="300" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="fried_rice"> Fried Rice (200g, 260 kcal)<input type="number" class="quantity" name="afternoon_fried_rice_qty" data-calories="260" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="kushka"> Kushka (200g, 220 kcal)<input type="number" class="quantity" name="afternoon_kushka_qty" data-calories="220" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="lemon_rice"> Lemon Rice (200g, 210 kcal)<input type="number" class="quantity" name="afternoon_lemon_rice_qty" data-calories="210" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="curd_rice"> Curd Rice (200g, 200 kcal)<input type="number" class="quantity" name="afternoon_curd_rice_qty" data-calories="200" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="egg_rice"> Egg Rice (200g, 250 kcal)<input type="number" class="quantity" name="afternoon_egg_rice_qty" data-calories="250" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="fish"> Fish Curry (150g, 280 kcal)<input type="number" class="quantity" name="afternoon_fish_qty" data-calories="280" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="boiled_egg"> Boiled Egg (1 piece, 75 kcal)<input type="number" class="quantity" name="afternoon_boiled_egg_qty" data-calories="75" placeholder="pieces" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="omelette"> Omelette (1 piece, 120 kcal)<input type="number" class="quantity" name="afternoon_omelette_qty" data-calories="120" placeholder="pieces" min="0"></label>
+                        <label><input type="checkbox" name="afternoon" value="sambar"> Sambar (200g, 150 kcal)<input type="number" class="quantity" name="afternoon_sambar_qty" data-calories="150" placeholder="grams" min="0"></label>
+                    </div>
+                </div>
+
+                <!-- Dinner Meal Column -->
+                <div class="meal-column">
+                    <button type="button" class="meal-button invaded" data-meal="dinner">Dinner</button>
+                    <button type="button" class="add-item-btn" data-meal="dinner">Add Item</button>
+                    <div class="meal-items" id="dinner-items">
+                        <label><input type="checkbox" name="dinner" value="khichdi"> Khichdi (200g, 200 kcal)<input type="number" class="quantity" name="dinner_khichdi_qty" data-calories="200" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="dinner" value="grilled_fish"> Grilled Fish (100g, 120 kcal)<input type="number" class="quantity" name="dinner_grilled_fish_qty" data-calories="120" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="dinner" value="vegetable_soup"> Vegetable Soup (1 bowl, 50 kcal)<input type="number" class="quantity" name="dinner_vegetable_soup_qty" data-calories="50" placeholder="bowls" min="0"></label>
+                        <label><input type="checkbox" name="dinner" value="fried_rice"> Fried Rice (200g, 260 kcal)<input type="number" class="quantity" name="dinner_fried_rice_qty" data-calories="260" placeholder="grams" min="0"></label>
+                        <label><input type="checkbox" name="dinner" value="parotta"> Parotta (1 piece, 150 kcal)<input type="number" class="quantity" name="dinner_parotta_qty" data-calories="150" placeholder="pieces" min="0"></label>
+                        <label><input type="checkbox" name="dinner" value="idli"> Idli (2 pieces, 70 kcal)<input type="number" class="quantity" name="dinner_idli_qty" data-calories="70" placeholder="pieces" min="0"></label>
+                        <label><input type="checkbox" name="dinner" value="chapaathi"> Chapaathi (1 piece, 80 kcal)<input type="number" class="quantity" name="dinner_chapaathi_qty" data-calories="80" placeholder="pieces" min="0"></label>
+                        <label><input type="checkbox" name="dinner" value="dosa"> Dosa (1 piece, 120 kcal)<input type="number" class="quantity" name="dinner_dosa_qty" data-calories="120" placeholder="count" min="0"></label>
+                        <label><input type="checkbox" name="dinner" value="chicken"> Chicken Curry (150g, 300 kcal)<input type="number" class="quantity" name="dinner_chicken_qty" data-calories="300" placeholder="grams" min="0"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <div class="button-group">
+                    <a href="{{ url_for('bmi_calculator') }}" class="back-btn">Back to Start</a>
+                    <input type="submit" value="Calculate Results">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal for Adding Custom Item -->
+    <div class="modal" id="addItemModal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h3>Add Custom Food Item</h3>
+            <form id="addItemForm">
+                <label>
+                    Food Name:
+                    <input type="text" id="foodName" required>
+                </label>
+                <label>
+                    Quantity:
+                    <input type="number" id="foodQuantity" min="0" required>
+                </label>
+                <label>
+                    Calories (kcal per unit):
+                    <input type="number" id="foodCalories" min="0" required>
+                </label>
+                <div class="button-group">
+                    <button type="submit" class="modal-btn">Add Item</button>
+                    <button type="button" class="modal-btn cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Ensure DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM fully loaded, attaching event listeners...');
+
+            // Verify buttons exist
+            const buttons = document.querySelectorAll('.meal-button');
+            console.log(`Found ${buttons.length} meal buttons`);
+
+            // Toggle visibility of meal items and manage button states
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const meal = button.getAttribute('data-meal');
+                    console.log(`Button clicked for meal: ${meal}`);
+                    const mealItems = document.getElementById(`${meal}-items`);
+                    if (mealItems) {
+                        mealItems.classList.toggle('visible');
+                        console.log(`Toggled visibility for ${meal}-items, visible: ${mealItems.classList.contains('visible')}`);
+                        buttons.forEach(btn => {
+                            btn.classList.remove('invaded', 'neutral', 'raised');
+                            if (btn === button && mealItems.classList.contains('visible')) {
+                                btn.classList.add('raised');
+                                console.log(`Set ${btn.getAttribute('data-meal')} to raised`);
+                            } else {
+                                btn.classList.add('neutral');
+                                console.log(`Set ${btn.getAttribute('data-meal')} to neutral`);
+                            }
+                        });
+                    } else {
+                        console.error(`Error: Element with ID ${meal}-items not found`);
+                    }
+                });
+            });
+
+            // Handle Add Item buttons
+            const addItemButtons = document.querySelectorAll('.add-item-btn');
+            const modal = document.getElementById('addItemModal');
+            const closeModal = document.querySelector('.close');
+            const cancelBtn = document.querySelector('.modal-btn.cancel');
+            const addItemForm = document.getElementById('addItemForm');
+            let currentMeal = '';
+
+            addItemButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    currentMeal = button.getAttribute('data-meal');
+                    console.log(`Add Item clicked for meal: ${currentMeal}`);
+                    modal.style.display = 'flex';
+                });
+            });
+
+            // Close modal
+            closeModal.addEventListener('click', () => {
+                modal.style.display = 'none';
+                addItemForm.reset();
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+                addItemForm.reset();
+            });
+
+            // Handle form submission
+            addItemForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const foodName = document.getElementById('foodName').value.trim();
+                const foodQuantity = parseFloat(document.getElementById('foodQuantity').value);
+                const foodCalories = parseFloat(document.getElementById('foodCalories').value);
+
+                if (foodName && foodQuantity >= 0 && foodCalories >= 0) {
+                    const mealItems = document.getElementById(`${currentMeal}-items`);
+                    const uniqueId = `custom_${currentMeal}_${Date.now()}`;
+                    const label = document.createElement('label');
+                    label.innerHTML = `
+                        <input type="checkbox" name="${currentMeal}" value="${uniqueId}" checked>
+                        ${foodName} (${foodQuantity} units, ${foodCalories} kcal/unit)
+                        <input type="number" class="quantity" name="${uniqueId}_qty" data-calories="${foodCalories}" value="${foodQuantity}" min="0" placeholder="units">
+                    `;
+                    mealItems.appendChild(label);
+                    mealItems.classList.add('visible'); // Ensure meal items are visible
+
+                    // Add event listeners to new inputs
+                    const newCheckbox = label.querySelector('input[type="checkbox"]');
+                    const newQuantity = label.querySelector('.quantity');
+                    newQuantity.style.display = 'inline-block';
+
+                    newQuantity.addEventListener('input', () => {
+                        newCheckbox.checked = newQuantity.value > 0;
+                        newQuantity.style.display = newCheckbox.checked ? 'inline-block' : 'none';
+                    });
+
+                    newCheckbox.addEventListener('change', () => {
+                        newQuantity.style.display = newCheckbox.checked ? 'inline-block' : 'none';
+                        if (!newCheckbox.checked) newQuantity.value = '';
+                    });
+
+                    // Update button state
+                    const mealButton = document.querySelector(`.meal-button[data-meal="${currentMeal}"]`);
+                    mealButton.classList.remove('invaded', 'neutral');
+                    mealButton.classList.add('raised');
+
+                    modal.style.display = 'none';
+                    addItemForm.reset();
+                } else {
+                    alert('Please fill in all fields with valid values.');
+                }
+            });
+
+            // Show/hide quantity inputs and auto-check checkboxes
+            document.querySelectorAll('.quantity').forEach(input => {
+                const checkbox = input.previousElementSibling.querySelector('input[type="checkbox"]');
+                input.style.display = checkbox.checked ? 'inline-block' : 'none';
+                input.addEventListener('input', () => {
+                    checkbox.checked = input.value > 0;
+                    input.style.display = checkbox.checked ? 'inline-block' : 'none';
+                    console.log(`Quantity input for ${input.name}, value: ${input.value}, checkbox checked: ${checkbox.checked}`);
+                });
+                checkbox.addEventListener('change', () => {
+                    input.style.display = checkbox.checked ? 'inline-block' : 'none';
+                    if (!checkbox.checked) input.value = '';
+                    console.log(`Checkbox changed for ${input.name}, display: ${input.style.display}`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

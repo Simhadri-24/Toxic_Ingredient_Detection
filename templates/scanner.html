@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scan & Analyze</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6f61; /* Coral */
+            --secondary-color: #2c3e50; /* Navy */
+            --accent-color: #28a745; /* Green */
+            --bg-gradient: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            --white: #ffffff;
+            --text-dark: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--secondary-color);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23dfe6e9" fill-opacity="0.2"%3E%3Cpath d="M0 0h2v2H0zM10 10h2v2h-2z"/%3E%3C/g%3E%3C/svg%3E');
+            z-index: -1;
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--secondary-color), #34495e);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 0 0 15px 15px;
+            margin-bottom: 40px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 100px);
+            position: relative;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .form-container {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+            margin: auto;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-container h2 {
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+            font-size: 1.8em;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .form-container h2::after {
+            content: '';
+            width: 50px;
+            height: 3px;
+            background: var(--primary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .input-group label {
+            font-size: 1em;
+            margin-bottom: 8px;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .input-group input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #dfe6e9;
+            font-size: 0.95em;
+            color: var(--secondary-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(255, 111, 97, 0.3);
+            outline: none;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .button {
+            padding: 12px 20px;
+            background: var(--accent-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .option-button {
+            background: var(--primary-color);
+        }
+
+        .option-button:hover {
+            background: #e55a4f;
+            box-shadow: 0 4px 10px rgba(255, 111, 97, 0.3);
+        }
+
+        .home-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 40px;
+            background: var(--secondary-color);
+            color: var(--white);
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .home-btn:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(44, 62, 80, 0.3);
+        }
+
+        .recent-scans {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            max-width: 350px;
+            animation: fadeIn 0.7s ease-in-out;
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .recent-scans h3 {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .recent-scans h3::after {
+            content: '';
+            width: 40px;
+            height: 3px;
+            background: var(--primary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #recent-scans-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        #recent-scans-table th, #recent-scans-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #dfe6e9;
+        }
+
+        #recent-scans-table th {
+            background: #f5f7fa;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        #recent-scans-table td {
+            color: var(--text-dark);
+        }
+
+        #recent-scans-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        #recent-scans-table td.result-Safe {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        #recent-scans-table td.result-Unsafe {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        /* Camera Interface */
+        #camera-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        #camera-video {
+            width: 90%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        #capture-button {
+            padding: 12px 40px;
+            background: var(--accent-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        #capture-button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        #close-camera {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #dc3545;
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        #close-camera:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        #camera-canvas {
+            display: none;
+        }
+
+        @media (max-width: 1200px) {
+            .recent-scans {
+                max-width: 300px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+                min-height: auto;
+            }
+
+            .form-container {
+                margin-bottom: 40px;
+            }
+
+            .recent-scans {
+                position: static;
+                transform: none;
+                max-width: 450px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-container, .recent-scans {
+                max-width: 90%;
+                padding: 30px;
+            }
+
+            .button-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .button, .option-button {
+                width: 100%;
+            }
+
+            header {
+                font-size: 1.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container, .recent-scans {
+                padding: 20px;
+            }
+
+            #camera-video {
+                width: 100%;
+            }
+
+            #recent-scans-table {
+                font-size: 0.85em;
+            }
+
+            #recent-scans-table th, #recent-scans-table td {
+                padding: 8px;
+            }
+
+            .form-container h2, .recent-scans h3 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Scan & Analyze</h2>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <h2>Scan Product</h2>
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="input-group">
+                    <label for="product-name">Product Name</label>
+                    <input type="text" name="product_name" id="product-name" placeholder="Enter product name" required />
+                </div>
+                <div class="input-group">
+                    <input type="file" name="imageFile" id="imageFile" accept="image/*" style="display:none;" required />
+                </div>
+                <div class="button-container">
+                    <button type="button" class="button option-button" id="cameraOption">Use Camera</button>
+                    <button type="button" class="button" id="imageOption">Upload Image</button>
+                </div>
+            </form>
+            <a href="{{ url_for('home') }}" class="home-btn">Back to Home</a>
+        </div>
+
+        <div class="recent-scans">
+            <h3>Recent Scans</h3>
+            <table id="recent-scans-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Product Name</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody id="recent-scans-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Camera Interface -->
+    <div id="camera-container">
+        <video id="camera-video" autoplay></video>
+        <button id="capture-button">Capture Photo</button>
+        <button id="close-camera">Close</button>
+        <canvas id="camera-canvas" style="display: none;"></canvas>
+    </div>
+
+    <script>
+        // Existing JavaScript for image upload
+        document.getElementById('imageOption').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('imageFile').click();
+        });
+
+        document.getElementById('imageFile').addEventListener('change', function(event) {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+                    checkProductNameAndProcess(imageData);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("Please select an image file!");
+            }
+        });
+
+        // Camera functionality
+        const cameraOption = document.getElementById('cameraOption');
+        const cameraContainer = document.getElementById('camera-container');
+        const video = document.getElementById('camera-video');
+        const captureButton = document.getElementById('capture-button');
+        const closeCameraButton = document.getElementById('close-camera');
+        const canvas = document.getElementById('camera-canvas');
+        let stream = null;
+
+        cameraOption.addEventListener('click', async function(event) {
+            event.preventDefault();
+            const productName = document.getElementById('product-name').value;
+            if (productName.trim() === '') {
+                alert('Please enter the product name before scanning.');
+                return;
+            }
+
+            try {
+                // Request camera access
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                video.srcObject = stream;
+                cameraContainer.style.display = 'flex';
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                alert('Unable to access camera. Please ensure camera permissions are granted or use the upload option.');
+            }
+        });
+
+        captureButton.addEventListener('click', function() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/jpeg');
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            cameraContainer.style.display = 'none';
+            checkProductNameAndProcess(imageData);
+        });
+
+        closeCameraButton.addEventListener('click', function() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            cameraContainer.style.display = 'none';
+        });
+
+        function checkProductNameAndProcess(imageData) {
+            const productName = document.getElementById('product-name').value;
+            if (productName.trim() === '') {
+                alert('Please enter the product name before scanning.');
+            } else {
+                processImage(imageData);
+            }
+        }
+
+        function processImage(imageData) {
+            fetch('/upload_and_process', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: imageData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.text) {
+                    sendToServer(data.text, document.getElementById('product-name').value);
+                } else {
+                    alert(data.error || "An error occurred");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function sendToServer(ingredientsText, productName) {
+            fetch('/process_scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ingredients: ingredientsText, product_name: productName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = `/result?safe=${data.safe}&causes=${encodeURIComponent(JSON.stringify(data.causes))}&full_text=${encodeURIComponent(data.full_text)}&product_name=${encodeURIComponent(productName)}`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function loadRecentScans() {
+            fetch('/recent_scans')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('recent-scans-tbody');
+                tableBody.innerHTML = data.map((item, index) => {
+                    const resultClass = item.is_safe ? 'result-Safe' : 'result-Unsafe';
+                    return `<tr>
+                        <td>${index + 1}</td>
+                        <td>${item.name}</td>
+                        <td class="${resultClass}">${item.is_safe ? 'Safe' : 'Unsafe'}</td>
+                    </tr>`;
+                }).join('');
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', loadRecentScans);
+    </script>
+</body>
+</html>

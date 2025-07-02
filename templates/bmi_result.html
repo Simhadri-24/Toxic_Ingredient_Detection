@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Result</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #8b4513; /* SaddleBrown for buttons and accents */
+            --secondary-color: #333; /* Dark gray for text */
+            --bg-gradient: linear-gradient(135deg, #e0eafc, #cfdef3);
+            --white: #ffffff;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --status-over: #ff4d4d; /* Red for over intake */
+            --status-less: #28a745; /* Green for less intake */
+            --status-balanced: #4682b4; /* SteelBlue for balanced intake */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--secondary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23dfe6e9" fill-opacity="0.2"%3E%3Cpath d="M0 0h2v2H0zM10 10h2v2h-2z"/%3E%3C/g%3E%3C/svg%3E');
+            z-index: -1;
+        }
+
+        .container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            animation: fadeIn 0.5s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            width: 60px;
+            height: 4px;
+            background: var(--primary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .result-grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            font-weight: 400;
+            color: var(--secondary-color);
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        p:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        p span.label {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        p span.value {
+            font-weight: 400;
+        }
+
+        .status-over-intake {
+            color: var(--status-over);
+            font-weight: 700;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .status-less-intake {
+            color: var(--status-less);
+            font-weight: 700;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .status-balanced-intake {
+            color: var(--status-balanced);
+            font-weight: 700;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .status-over-intake::before,
+        .status-less-intake::before,
+        .status-balanced-intake::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background-size: cover;
+        }
+
+        .status-over-intake::before {
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff4d4d"%3E%3Cpath d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/%3E%3C/svg%3E');
+        }
+
+        .status-less-intake::before {
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2328a745"%3E%3Cpath d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/%3E%3C/svg%3E');
+        }
+
+        .status-balanced-intake::before {
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234682b4"%3E%3Cpath d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/%3E%3C/svg%3E');
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: rgba(139, 69, 19, 0.2);
+            margin: 20px 0;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        a {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        a:hover {
+            background: #a0522d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(139, 69, 19, 0.3);
+        }
+
+        .decor-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(139, 69, 19, 0.2);
+            z-index: -1;
+        }
+
+        .decor-circle:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: -50px;
+            left: -50px;
+        }
+
+        .decor-circle:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            bottom: -40px;
+            right: -40px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                max-width: 90%;
+            }
+
+            h2 {
+                font-size: 2em;
+            }
+
+            p {
+                font-size: 1em;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="decor-circle"></div>
+        <div class="decor-circle"></div>
+        <h2>Your Results</h2>
+        <div class="result-grid">
+            <p><span class="label">BMI:</span> <span class="value">{{ bmi }}</span></p>
+            <p><span class="label">Category:</span> <span class="value">{{ category }}</span></p>
+            <hr>
+            <p><span class="label">Base Calorie Range:</span> <span class="value">{{ calorie_range }}</span></p>
+            <p><span class="label">Total Calorie Intake:</span> <span class="value">{{ total_calories }} kcal</span></p>
+            <p><span class="label">Recommended Daily Calories:</span> <span class="value">{{ recommended_calories }} kcal</span></p>
+            <p class="status-{{ calorie_status.lower()|replace(' ', '-')}}">
+                <span class="label">Calorie Status:</span> 
+                <span class="value">
+                    {{ calorie_status }} 
+                    {% if calorie_status != "Balanced Intake" %}
+                        ({{ calorie_difference }} kcal 
+                        {% if calorie_status == "Over Intake" %}over{% else %}under{% endif %})
+                    {% endif %}
+                </span>
+            </p>
+        </div>
+        <div class="button-group">
+            <a href="{{ url_for('bmi_calculator') }}">Back to Start</a>
+            <a href="{{ url_for('home') }}">Home</a>
+        </div>
+    </div>
+</body>
+</html>

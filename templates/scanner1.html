@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Zoom Scanner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6f61; /* Vibrant coral */
+            --secondary-color: #2c3e50; /* Dark navy */
+            --accent-color: #28a745; /* Green for actions */
+            --bg-gradient: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--secondary-color);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23dfe6e9" fill-opacity="0.2"%3E%3Cpath d="M0 0h2v2H0zM10 10h2v2h-2z"/%3E%3C/g%3E%3C/svg%3E');
+            z-index: -1;
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--secondary-color), #34495e);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 0 0 15px 15px;
+            margin-bottom: 40px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .form-container {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 60px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-container h2 {
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+            font-size: 1.8em;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+        }
+
+        .form-container h2::after {
+            content: '';
+            width: 50px;
+            height: 3px;
+            background: var(--primary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 1em;
+            margin-bottom: 8px;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .input-group input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #dfe6e9;
+            font-size: 0.95em;
+            color: var(--secondary-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(255, 111, 97, 0.3);
+            outline: none;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .button {
+            padding: 12px 20px;
+            background: var(--accent-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            width: 100%;
+            text-align: center;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .option-button {
+            background: var(--primary-color);
+        }
+
+        .option-button:hover {
+            background: #e55a4f;
+            box-shadow: 0 4px 10px rgba(255, 111, 97, 0.3);
+        }
+
+        .flash-message {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .flash-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flash-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .camera-interface {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 450px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        #video {
+            display: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+
+        #snap {
+            display: none;
+            margin-top: 10px;
+            width: 200px;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .text-result {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--white);
+            border: 2px solid #dfe6e9;
+            border-radius: 15px;
+            white-space: pre-wrap;
+            max-height: 250px;
+            overflow-y: auto;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: var(--shadow);
+            font-size: 0.95em;
+            color: var(--secondary-color);
+            animation: fadeIn 0.5s ease-in-out;
+            display: none;
+        }
+
+        .home-button {
+            margin-top: 40px;
+            background: var(--secondary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            padding: 12px 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .home-button:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(44, 62, 80, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .form-container, .camera-interface, .text-result, .home-button {
+                max-width: 90%;
+            }
+
+            header {
+                font-size: 1.5em;
+            }
+
+            .button-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .button, .option-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container, .camera-interface {
+                padding: 20px;
+            }
+
+            #video {
+                width: 100%;
+                height: auto;
+            }
+
+            .text-result {
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Smart Zoom Scanner</h2>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <h2>Scan Product</h2>
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="input-group">
+                    <label for="imageFile" style="display:none;">Upload Image</label>
+                    <input type="file" name="imageFile" id="imageFile" accept="image/*" style="display:none;" required />
+                </div>
+                <div class="button-container">
+                    <button type="button" class="button option-button" id="cameraOption">Use Camera</button>
+                    <button type="button" class="button" id="imageOption">Upload Image</button>
+                </div>
+            </form>
+            <div id="textResult" class="text-result"></div>
+        </div>
+        <div class="camera-interface">
+            <video id="video" width="320" height="240" autoplay></video>
+            <button id="snap" class="button">Take Photo</button>
+            <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+        </div>
+        <a href="{{ url_for('home') }}" class="home-button">Back to Home</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
+    <script>
+        document.getElementById('cameraOption').addEventListener('click', function() {
+            const cameraInterface = document.querySelector('.camera-interface');
+            cameraInterface.style.display = 'flex';
+            initCamera();
+        });
+
+        function initCamera() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const snap = document.getElementById('snap');
+
+            video.style.display = 'block';
+            snap.style.display = 'inline-block';
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("Error accessing camera:", err);
+                    document.getElementById('textResult').style.display = 'block';
+                    document.getElementById('textResult').textContent = 'Error accessing camera. Please try uploading an image.';
+                });
+
+            snap.addEventListener('click', function() {
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                let imageData = canvas.toDataURL('image/png');
+                const cropped = cropImage(canvas, 50, 50, 220, 140);
+                processImage(cropped);
+            });
+        }
+
+        function cropImage(canvas, x, y, width, height) {
+            const tempCanvas = document.createElement('canvas');
+            const tempContext = tempCanvas.getContext('2d');
+            tempCanvas.width = width;
+            tempCanvas.height = height;
+            tempContext.drawImage(canvas, x, y, width, height, 0, 0, width, height);
+            return tempCanvas.toDataURL('image/png');
+        }
+
+        function processImage(imageData) {
+            const textResult = document.getElementById('textResult');
+            textResult.style.display = 'block';
+            textResult.textContent = 'Processing image... Please wait.';
+            
+            Tesseract.recognize(
+                imageData,
+                'eng',
+                { logger: m => console.log(m) }
+            ).then(({ data: { text } }) => {
+                if (text) {
+                    displayText(text);
+                } else {
+                    textResult.textContent = 'No text could be extracted from the image.';
+                }
+            }).catch(error => {
+                textResult.textContent = 'Error processing image: ' + error.message;
+                console.error('Error:', error);
+            });
+        }
+
+        function displayText(text) {
+            const textResult = document.getElementById('textResult');
+            textResult.style.display = 'block';
+            textResult.textContent = text;
+        }
+
+        document.getElementById('imageOption').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('imageFile').click();
+        });
+
+        document.getElementById('imageFile').addEventListener('change', function(event) {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageData = e.target.result;
+                    processImage(imageData);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("Please select an image file!");
+            }
+        });
+    </script>
+</body>
+</html>

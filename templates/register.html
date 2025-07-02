@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+      }
+
+      .register-box {
+        background-color: white;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        text-align: center;
+      }
+
+      .register-box h2 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .input-field {
+        margin-bottom: 15px;
+        width: 100%;
+      }
+
+      .input-field input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      .input-field input:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+
+      .button {
+        width: 100%;
+        padding: 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .button:hover {
+        background-color: #218838;
+      }
+
+      .login-link {
+        margin-top: 15px;
+        color: #007bff;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .login-link:hover {
+        text-decoration: underline;
+      }
+
+      .error-message {
+        color: 218838;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+	  .flash-message {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+
+    .flash-message.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="register-box">
+        <h2>Register</h2>
+        <form method="POST">
+          <div class="input-field">
+            <input type="text" name="name" placeholder="Full Name" required />
+          </div>
+          <div class="input-field">
+            <input type="email" name="email" placeholder="Email" required />
+          </div>
+          <div class="input-field">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div class="input-field">
+            <input
+              type="password"
+              name="confirm_password"
+              placeholder="Confirm Password"
+              required
+            />
+          </div>
+          <button type="submit" class="button">Register</button>
+        </form>
+        <p class="login-link">
+          Already have an account?
+          <a href="{{ url_for('login') }}">Login here</a>
+        </p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan with Camera</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #camera-container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="camera-container">
+        <video id="video" width="320" height="240" autoplay></video>
+        <button id="snap">Take Photo</button>
+        <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const snap = document.getElementById('snap');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => console.error("Error accessing camera:", err));
+
+        snap.addEventListener('click', function() {
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            let imageData = canvas.toDataURL('image/png');
+            processImage(imageData);
+        });
+
+        function processImage(imageData) {
+            fetch('/upload_and_process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: imageData })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.text) {
+                    sendToServer(data.text);
+                } else {
+                    alert(data.error || "An error occurred");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function sendToServer(ingredientsText) {
+            fetch('/process_scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ingredients: ingredientsText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = `/result?safe=${data.safe}&toxic=${data.toxic.join(',')}`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

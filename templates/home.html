@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(45deg, #6a11cb, #2575fc);
+            --secondary-gradient: linear-gradient(45deg, #ff6a00, #ee0979);
+            --tertiary-gradient: linear-gradient(45deg, #2E8B57, #3CB371);
+            --hover-brightness: 1.2;
+            --light-bg: rgba(248, 249, 250, 0.9);
+            --dark-bg: rgba(44, 62, 80, 0.9);
+            --text-light: #ffffff;
+            --text-dark: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url("{{ url_for('static', filename='images/food.png') }}") no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+			height:1000px;
+        }
+
+        .overlay {
+            background-color: rgba(255, 255, 255, 0.5);
+            width: 120%;
+            min-height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            
+            width: 100%;
+            flex: 1;  /* This allows content-wrapper to grow and take up available space */
+        }
+
+        header {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            padding: 20px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        header h2 {
+            margin: 0 30px;
+            flex: 1;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .logout-btn {
+            background-color: #E74C3C;
+            color: var(--text-light);
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+			margin-right:25px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .logout-btn:hover {
+            background-color: #C0392B;
+            transform: scale(1.05);
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: stretch;
+            padding: 30px;
+			padding-bottom:50px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .option {
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            color: var(--text-light);
+            transition: transform 0.3s, filter 0.3s;
+            cursor: pointer;
+            flex: 1;
+            margin: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            min-width: 250px;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .option:hover {
+            filter: brightness(var(--hover-brightness));
+            transform: translateY(-8px);
+        }
+
+        .option:nth-child(1) { background: var(--primary-gradient); }
+        .option:nth-child(2) { background: var(--secondary-gradient); }
+        .option:nth-child(3) { background: var(--tertiary-gradient); }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            width: 100%;
+        }
+
+        .credits {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background-color: var(--light-bg);
+            text-align: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+		.design {
+			display: flex;
+            justify-content: center;
+            background-color: var(--light-bg);
+            text-align: center;
+            flex-wrap: wrap;
+            width: 100%;
+			}
+			
+        .developer {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 250px;
+            text-align: center;
+        }
+
+        .developer img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+
+        .developer h4 {
+            margin: 10px 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <header>
+        <h2>Welcome {{ name }}!</h2>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+    </header>
+
+    <div class="content-wrapper">
+        <div class="button-container">
+            <a href="{{ url_for('scanner_home1') }}" class="option">
+                <h3>🔍 Smart Zoom</h3>
+                <p>Smart Zoom is a text recognition tool designed to scan small-sized text and display it in an enlarged format.</p>
+            </a>
+            <a href="{{ url_for('scanner_home') }}" class="option">
+                <h3>📸 Scan & Analyze</h3>
+                <p>Scan & Analyze extracts ingredients from packaged food and identifies potentially toxic substances.</p>
+            </a>
+            <a href="{{ url_for('bmi_calculator') }}" class="option">
+                <h3>🔥 BMI Calculator</h3>
+                <p>Calculate daily calorie intake based on BMI and activity level.</p>
+            </a>
+        </div>
+        
+        <!-- Footer moved inside content-wrapper for vertical scrolling -->
+        <div class="footer">
+            <p><i>"You are what you eat, so don’t be fast, cheap, easy, or fake."</i></p>
+        </div>
+		<div class="design">
+		<h2>Designed & Developed by </h2> <br> 
+		</div>
+		
+        <!-- Credits moved inside content-wrapper for vertical scrolling -->
+        <div class="credits">
+            <div class="developer">
+                <img src="static/images/Dhanush.jpg" alt="Developer 1">
+                <h4>Ch Dhanush Srikar</h4>
+            </div>
+            <div class="developer">
+                <img src="static/images/Sai.jpg" alt="Developer 2">
+                <h4>K P Sai          </h4>
+            </div>
+            <div class="developer">
+                <img src="static/images/Simhadri.jpg" alt="Developer 3">
+                <h4>T Simhadri       </h4>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
