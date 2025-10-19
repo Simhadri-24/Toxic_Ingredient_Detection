@@ -8,4 +8,5 @@ pandas
 openpyxl
 scikit-fuzzy
 numpy
+scipy
 gunicorn
