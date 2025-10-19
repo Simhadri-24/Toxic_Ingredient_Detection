@@ -9,4 +9,5 @@ openpyxl
 scikit-fuzzy
 numpy
 scipy
+networkx
 gunicorn
