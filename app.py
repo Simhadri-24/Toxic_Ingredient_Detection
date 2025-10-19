@@ -584,10 +584,14 @@ def bmi_result():
                           calorie_difference=round(abs(calorie_difference), 2))
 
 if __name__ == '__main__':
-    # Ensure database tables are created before running
     with app.app_context():
-        db.create_all()
-        print("✅ Database tables created successfully")
+        db_path = os.path.join(os.getcwd(), "instance", "app.db")
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
 
-    # Run the Flask app
-    app.run(host='0.0.0.0', port=5000)
+        # Ensure tables are created
+        db.create_all()
+        print("✅ Database initialized at:", db_path)
+
+    # Use Render’s expected port if available
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
