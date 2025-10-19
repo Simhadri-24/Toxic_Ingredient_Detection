@@ -8,3 +8,4 @@ pandas==1.5.3
 openpyxl==3.1.5
 scikit-fuzzy==0.4.2
 numpy==1.26.4
+gunicorn
